@@ -166,27 +166,19 @@ async def purge(interaction: discord.Interaction, amount: int):
     await interaction.followup.send(f"✅ Deleted {amount} messages.", ephemeral=True)
 
 @client.tree.command(name="dm", description="Owner-only: DM a user with a custom message 💌")
-@app_commands.describe(user_id="The ID of the user you want to message", message="The message to send")
-async def dm(interaction: discord.Interaction, user_id: str, message: str):
+@app_commands.describe(user="The user to DM", message="The message you want to send")
+async def dm(interaction: discord.Interaction, user: discord.User, message: str):
+    if interaction.user.id != OWNER_ID:
+        await interaction.response.send_message("❌ You are not authorized to use this command.", ephemeral=True)
+        return
+
     try:
-        user = await client.fetch_user(int(user_id))
-        await user.send(f"{message}")
-        await interaction.response.send_message("✅ Message sent.", ephemeral=True)
-
-        client.recent_dm_map[user.id] = interaction.user.id
-
+        await user.send(message)
+        await interaction.response.send_message(f"✅ Successfully sent a DM to {user.mention}!", ephemeral=True)
+    except discord.Forbidden:
+        await interaction.response.send_message(f"❌ I can't DM {user.mention} (maybe they have DMs closed!).", ephemeral=True)
     except Exception as e:
-        await interaction.response.send_message(f"❌ Failed to send message: {e}", ephemeral=True)
-
-client.recent_dm_map = {}
-
-@client.event
-async def on_message(message):
-    if message.guild is None and not message.author.bot:
-        sender_id = client.recent_dm_map.get(message.author.id)
-        if sender_id:
-            sender = await client.fetch_user(sender_id)
-            await sender.send(f"📩 **Reply from `{message.author}`:**\n\n{message.content}")
+        await interaction.response.send_message(f"❌ Failed to send DM. Error: {e}", ephemeral=True)
 
 STATUS_VOICE_CHANNEL_ID = 1365673489503227914
 
