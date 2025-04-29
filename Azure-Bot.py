@@ -165,15 +165,13 @@ async def purge(interaction: discord.Interaction, amount: int):
 
     await interaction.followup.send(f"✅ Deleted {amount} messages.", ephemeral=True)
 
-user_links = {}
-
 @client.tree.command(name="dm", description="Owner-only: DM a user with a custom message 💌")
 @app_commands.describe(user_id="The ID of the user you want to message", message="The message to send")
 async def dm(interaction: discord.Interaction, user_id: str, message: str):
     try:
         user = await client.fetch_user(int(user_id))
-        await user.send(f"📨 You’ve received an anonymous message:\n\n{message}")
-        await interaction.response.send_message("✅ Message sent anonymously.", ephemeral=True)
+        await user.send(f"{message}")
+        await interaction.response.send_message("✅ Message sent.", ephemeral=True)
 
         client.recent_dm_map[user.id] = interaction.user.id
 
