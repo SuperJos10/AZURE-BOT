@@ -177,7 +177,7 @@ async def dm(interaction: discord.Interaction, user: discord.User, message: str)
     except discord.Forbidden:
         await interaction.response.send_message("❌ Couldn't DM that user.", ephemeral=True)
 
-@bot.event
+@client.event
 async def on_message(message):
     if message.guild is None and not message.author.bot:
         if message.author.id in user_links:
