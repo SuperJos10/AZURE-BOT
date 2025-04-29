@@ -167,23 +167,28 @@ async def purge(interaction: discord.Interaction, amount: int):
 
 user_links = {}
 
-@client.tree.command(name="dm")
-@app_commands.describe(user="User to DM", message="Message to send")
-async def dm(interaction: discord.Interaction, user: discord.User, message: str):
+@client.tree.command(name="dm", description="Owner-only: DM a user with a custom message 💌")
+@app_commands.describe(user_id="The ID of the user you want to message", message="The message to send")
+async def dm(interaction: discord.Interaction, user_id: str, message: str):
     try:
-        await user.send(f"📨 Message from `{interaction.user}`:\n{message}")
-        await interaction.response.send_message("✅ Message sent!", ephemeral=True)
-        user_links[user.id] = interaction.user.id  # Save the link
-    except discord.Forbidden:
-        await interaction.response.send_message("❌ Couldn't DM that user.", ephemeral=True)
+        user = await client.fetch_user(int(user_id))
+        await user.send(f"📨 You’ve received an anonymous message:\n\n{message}")
+        await interaction.response.send_message("✅ Message sent anonymously.", ephemeral=True)
+
+        client.recent_dm_map[user.id] = interaction.user.id
+
+    except Exception as e:
+        await interaction.response.send_message(f"❌ Failed to send message: {e}", ephemeral=True)
+
+client.recent_dm_map = {}
 
 @client.event
 async def on_message(message):
     if message.guild is None and not message.author.bot:
-        if message.author.id in user_links:
-            sender_id = user_links[message.author.id]
-            sender = await bot.fetch_user(sender_id)
-            await sender.send(f"📬 Reply from `{message.author}`:\n{message.content}")
+        sender_id = client.recent_dm_map.get(message.author.id)
+        if sender_id:
+            sender = await client.fetch_user(sender_id)
+            await sender.send(f"📩 **Reply from `{message.author}`:**\n\n{message.content}")
 
 STATUS_VOICE_CHANNEL_ID = 1365673489503227914
 
