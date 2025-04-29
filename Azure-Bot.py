@@ -167,7 +167,7 @@ async def purge(interaction: discord.Interaction, amount: int):
 
 user_links = {}
 
-@bot.tree.command(name="dm")
+@client.tree.command(name="dm")
 @app_commands.describe(user="User to DM", message="Message to send")
 async def dm(interaction: discord.Interaction, user: discord.User, message: str):
     try:
