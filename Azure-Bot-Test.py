@@ -12,6 +12,9 @@ import uuid
 from obfuscate import smooth_color_obfuscation
 from io import BytesIO
 from PIL import Image
+import cv2
+import numpy as np
+import sys
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
