@@ -8,6 +8,10 @@ import asyncio
 import json
 import os
 from dotenv import load_dotenv
+import uuid
+from obfuscate import smooth_color_obfuscation
+from io import BytesIO
+from PIL import Image
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -235,6 +239,29 @@ async def calculate_tax(interaction: discord.Interaction, amount: float):
     )
 
     await interaction.response.send_message(response)
+
+@client.tree.command(name="image-obfuscate", description="Upload an image (jpg/png/webp) to obfuscate it")
+@app_commands.describe(image="Upload an image file (jpg/png/webp)")
+async def image_obfuscate(interaction: discord.Interaction, image: discord.Attachment):
+    if not image.filename.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
+        await interaction.response.send_message("❌ Only `.jpg`, `.jpeg`, `.png`, or `.webp` files are supported!", ephemeral=True)
+        return
+
+    await interaction.response.defer()
+
+    try:
+        image_bytes = await image.read()
+        original_image = Image.open(BytesIO(image_bytes)).convert("RGB")
+
+        obfuscated_image = smooth_color_obfuscation(original_image)
+
+        with BytesIO() as output_buffer:
+            obfuscated_image.save(output_buffer, format="PNG")
+            output_buffer.seek(0)
+            await interaction.followup.send(file=discord.File(fp=output_buffer, filename="obfuscated.png"))
+
+    except Exception as e:
+        await interaction.followup.send(f"❌ An error occurred while processing the image:\n`{e}`", ephemeral=True)
   
 class TicketView(View):
     def __init__(self):
