@@ -1,1 +1,1 @@
-worker: python Azure-Bot.py
+worker: python Azure-Bot-Test.py
