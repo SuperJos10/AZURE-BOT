@@ -1,10 +1,11 @@
 # Well hello there!
-If you found this and the code isn't obfuscated, fuck you.
-
-I'm obfuscating this code with 3 different hand-made encryption methods alongside 3 key methods (uncrackable gg).
-
-Anyways, this is just the github repo for my Discord bot **AZURE-BOT**!
-I have this repo so I can host the bot online so it can run 24/7, instead of locally where it can only run if my computer is on.
+I'm finally updating the read-me file for this project!
 
 
-Hope you enjoy a sneak-peek through the code while you're at it... just no copying, thanks :)
+Long story short this is just a little bot project I'm working on that runs my trading Discord server.
+
+
+As you can also already tell, I've managed to push the obfuscation update. The code has been triple encrypted using 3 different keys that are all large strings (goodluck reverse-engineering or stealing my code LOL).
+
+
+That's about all I have to say, I hope you enjoy the progress that follows with this bot! :D
